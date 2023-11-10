@@ -34,15 +34,17 @@ def transform():
 
     ### Union de los dataframes y transformaciones finales
     dff = pd.concat([df1, df2, df3, df4, df5], ignore_index=False)
-    dff = dff.drop(["Dystopia Residual","Happiness Rank","Freedom","Trust (Government Corruption)","Generosity"], axis = 1)
+    dff = dff.drop(["Dystopia Residual","Happiness Rank","Trust (Government Corruption)","Generosity","Year"], axis = 1)
     dff['Happiness Score'] = dff['Happiness Score'].round(3)
     dff['Family'] = dff['Family'].round(3)
     dff['Economy (GDP per Capita)'] = dff['Economy (GDP per Capita)'].round(3)
     dff['Health (Life Expectancy)'] = dff['Health (Life Expectancy)'].round(3)
+    dff['Freedom'] = dff['Freedom'].round(3)
     dff = dff.dropna()
     dff = dff.sample(frac=0.3, random_state=12)
     dff.to_csv("data/resultados.csv")
     return dff
+    
 
 
 

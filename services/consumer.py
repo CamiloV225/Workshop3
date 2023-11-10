@@ -1,12 +1,17 @@
-from kafka import  KafkaConsumer
-from json import dumps, loads
 import pandas as pd
 import joblib
 from services.db import upload_data
+from sklearn.metrics import mean_squared_error
+from kafka import  KafkaConsumer
+from json import dumps, loads
+import time
 
 print('--------------Kafka Consumer--------------')
 
 def kafka_consumer():
+    df = pd.read_csv('/home/camilo/docker/workshop3/data/resultados.csv')
+    filas = len(df)
+    print(filas)
     loaded_model = joblib.load('/home/camilo/docker/workshop3/model/modelo_regresion.pkl')
     consumer = KafkaConsumer(
         'workshop3',
@@ -18,15 +23,18 @@ def kafka_consumer():
     )
     list_of_dfs = []
     mensajes_consumidos = 0
-    print("---------Obteniendo Mensajes----------")
+    print("---------Esperando Mensajes----------")
     for message in consumer:
+        time.sleep(1)
         try:
             json_data = message.value
             print(json_data)
             df = pd.DataFrame.from_dict([json_data])
             #loaded_model = joblib.load('/home/camilo/docker/workshop3/model/modelo_regresion.pkl')
-            example_features = df[['Economy (GDP per Capita)', 'Health (Life Expectancy)', 'Family']].values
+            example_features = df[['Economy (GDP per Capita)', 'Health (Life Expectancy)', 'Family','Freedom']].values
             predicted_happiness = loaded_model.predict(example_features.reshape(1, -1))
+            #mse = mean_squared_error(example_features, predicted_happiness)
+            #print(f"Mean Squared Error: {mse}")
             df['Predicted Happiness'] = predicted_happiness
             print(f"Estimated happiness: {predicted_happiness}")
             print(df)
@@ -42,7 +50,7 @@ def kafka_consumer():
 
         final_df = pd.concat(list_of_dfs, ignore_index=True)
         final_df.to_csv('combined_dataframe.csv', index=False)
-        if mensajes_consumidos >= 235: #
+        if mensajes_consumidos >= filas: #
             print("No hay más mensajes.")
             break
     consumer.close()

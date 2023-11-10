@@ -12,6 +12,7 @@ def kafka_producer():
         value_serializer = lambda m: dumps(m).encode('utf-8'),
         bootstrap_servers = ['localhost:9092'],
     )
+    time.sleep(0.5)
     try:
         for index, row in df.iterrows():
             message = row.to_dict()

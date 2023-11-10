@@ -12,7 +12,7 @@ def connect_mysql():
         database=dbfile["database"]
     )
     
-    print("-----------Database Connected--------")
+    #print("-----------Database Connected--------")
     return connection
 
 
@@ -25,7 +25,7 @@ def create_table():
         Economy FLOAT,
         Family FLOAT,
         Health FLOAT,
-        Year INT,
+        Freedom FLOAT,
         Predicted FLOAT
         )
         """
@@ -34,18 +34,6 @@ def create_table():
     conn.close()
     print("------------Tabla Creada-----------")
 
-# def upload_data(final_df):
-#     print("------------------DB----------------")
-#     conn = connect_mysql()
-#     cursor = conn.cursor()
-#     create_table()
-
-#     for index, row in final_df.iterrows():
-#         query = f"""INSERT INTO happiness_prediction (Happiness_Score,Economy,Family,Health,Year,Predicted) 
-#                 VALUES (%s,%s,%s,%s,%s,%s )"""
-#         cursor.execute(query, (row["Happiness Score"],row["Economy (GDP per Capita)"],row["Family"],row["Health (Life Expectancy)"],row["Year"],row["Predicted Happiness"]))
-#     conn.commit()
-#     conn.close()
 
 def upload_data(df):
     print("------------Insertando Datos-----------")
@@ -54,8 +42,8 @@ def upload_data(df):
     create_table()
 
     row = df.iloc[0]
-    query = f"""INSERT INTO happiness_prediction (Happiness_Score,Economy,Family,Health,Year,Predicted) 
+    query = f"""INSERT INTO happiness_prediction (Happiness_Score,Economy,Family,Health,Freedom,Predicted) 
             VALUES (%s,%s,%s,%s,%s,%s )"""
-    cursor.execute(query, (row["Happiness Score"],row["Economy (GDP per Capita)"],row["Family"],row["Health (Life Expectancy)"],row["Year"],row["Predicted Happiness"]))
+    cursor.execute(query, (row["Happiness Score"],row["Economy (GDP per Capita)"],row["Family"],row["Health (Life Expectancy)"],row["Freedom"],row["Predicted Happiness"]))
     conn.commit()
     conn.close()
